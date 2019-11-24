@@ -1,0 +1,50 @@
+
+version: '3.3'
+
+services:
+   db:
+     image: mysql:latest
+     command: --default-authentication-plugin=mysql_native_password
+     networks:
+       app_net:
+         ipv4_address: 172.16.238.2
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: SUP-SEC-Pass
+       MYSQL_DATABASE: wiki_data
+     security_opt:
+       - seccomp:unconfined
+
+   back_end:
+     depends_on:
+       - db
+     image: back_end:latest
+     networks:
+       app_net:
+         ipv4_address: 172.16.238.3
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: SUP-SEC-Pass
+       TZ: Asia/Jerusalem
+
+
+   front_end:
+     depends_on:
+       - db
+     image: front_end:latest
+     networks:
+       app_net:
+         ipv4_address: 172.16.238.4
+     ports:
+       - "8989:8989"
+
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: SUP-SEC-Pass
+
+networks:
+ app_net:
+   ipam:
+     driver: default
+     config:
+       - subnet: "172.16.238.0/24"

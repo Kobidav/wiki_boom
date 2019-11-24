@@ -1,0 +1,10 @@
+FROM python:3
+
+WORKDIR /usr/src/app
+
+COPY req.txt ./
+RUN pip install --no-cache-dir -r req.txt
+
+COPY back_end.py ./back_end.py
+
+CMD [ "python", "back_end.py"]
